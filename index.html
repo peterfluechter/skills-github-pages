@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reha-Begleiter &ndash; Diakonie Fachkliniken Heidehof</title>
+
+  <link rel="manifest" href="data:application/manifest+json;charset=utf-8,%7B%22name%22%3A%22Reha-Begleiter%20EFH%22%2C%22short_name%22%3A%22Reha-Begleiter%22%2C%22display%22%3A%22standalone%22%2C%22orientation%22%3A%22portrait%22%2C%22background_color%22%3A%22%23FFFFFF%22%2C%22theme_color%22%3A%22%23511874%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%3Bcharset%3Dutf-8%2C%253Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%20100%20100'%253E%253Crect%20width%3D'100'%20height%3D'100'%20rx%3D'20'%20fill%3D'%2523511874'%2F%253E%253Cpath%20d%3D'M30%2050h40M50%2030v40'%20stroke%3D'%2523009EE3'%20stroke-width%3D'10'%20stroke-linecap%3D'round'%2F%253E%253C%2Fsvg%253E%22%2C%22sizes%22%3A%22192x192%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%7D%5D%7D">
+
+  <meta name="theme-color" content="#511874">
+  <meta name="description" content="Reha-Begleiter der Diakonie Fachkliniken Heidehof &ndash; Wissen und Unterstützung im Genesungsprozess.">
+
+  <style>
+    /* =========================================================
+       Design-Tokens (Corporate Design Diakonie / Heidehof)
+       ========================================================= */
+    :root {
+      --color-primary: #511874;        /* Heidehof Lila */
+      --color-primary-dark: #3D1259;
+      --color-accent: #009EE3;         /* Diakonie Blau */
+      --color-accent-dark: #0078AD;
+      --color-bg: #FFFFFF;
+      --color-surface: #F5F5F8;
+      --color-surface-alt: #FAFAFC;
+      --color-text-primary: #1F1F23;
+      --color-text-secondary: #5F5F66;
+      --color-text-muted: #8A8A92;
+      --color-border: #E2E2E8;
+      --color-border-strong: #C9C9D2;
+      --radius-card: 14px;
+      --radius-sm: 8px;
+      --shadow-card: 0 4px 14px rgba(81, 24, 116, 0.06);
+      --shadow-card-hover: 0 8px 22px rgba(81, 24, 116, 0.10);
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+                    "Helvetica Neue", Arial, sans-serif;
+    }
+
+    /* =========================================================
+       Reset & Basis
+       ========================================================= */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { -webkit-text-size-adjust: 100%; }
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--color-surface);
+      color: var(--color-text-primary);
+      -webkit-tap-highlight-color: transparent;
+      display: flex;
+      justify-content: center;
+      line-height: 1.5;
+    }
+
+    #app {
+      width: 100%;
+      max-width: 480px;
+      min-height: 100vh;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      background: var(--color-surface);
+      box-shadow: 0 0 24px rgba(0, 0, 0, 0.06);
+    }
+
+    /* =========================================================
+       Typografie
+       ========================================================= */
+    h1 {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--color-primary);
+      margin-bottom: 18px;
+      line-height: 1.25;
+      letter-spacing: -0.01em;
+    }
+    h2 {
+      font-size: 19px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: var(--color-primary);
+      line-height: 1.3;
+      letter-spacing: -0.005em;
+    }
+    p {
+      font-size: 15.5px;
+      line-height: 1.65;
+      margin-bottom: 14px;
+      color: var(--color-text-primary);
+      hyphens: auto;
+      -webkit-hyphens: auto;
+    }
+    p:last-child { margin-bottom: 0; }
+    small { font-size: 14px; color: var(--color-text-secondary); }
+    strong { font-weight: 700; }
+
+    /* =========================================================
+       Views (Tabs)
+       ========================================================= */
+    .view {
+      flex: 1;
+      padding: 24px 22px 110px 22px;
+      overflow-y: auto;
+      display: none;
+      animation: fadeIn 0.35s ease-in-out;
+    }
+    .view.active { display: block; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* =========================================================
+       Karten
+       ========================================================= */
+    .card {
+      background: white;
+      border-radius: var(--radius-card);
+      padding: 22px 20px;
+      box-shadow: var(--shadow-card);
+      margin-bottom: 18px;
+      border: 1px solid var(--color-border);
+      border-top: 4px solid var(--color-accent);
+      transition: box-shadow 0.2s ease, transform 0.15s ease;
+      page-break-inside: avoid;
+      break-inside: avoid;
+    }
+    .card:hover { box-shadow: var(--shadow-card-hover); }
+    .card.card--primary { border-top-color: var(--color-primary); }
+    .card-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 28px;
+      height: 28px;
+      padding: 0 8px;
+      border-radius: 14px;
+      background: var(--color-primary);
+      color: white;
+      font-size: 13px;
+      font-weight: 700;
+      margin-right: 10px;
+      vertical-align: middle;
+    }
+    .card h2 {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* =========================================================
+       Logo-Bereich (Inline SVG, druckreif)
+       ========================================================= */
+    .logo-container {
+      text-align: center;
+      margin-bottom: 26px;
+      padding: 28px 24px;
+      background: white;
+      border-radius: var(--radius-card);
+      box-shadow: var(--shadow-card);
+      border: 1px solid var(--color-border);
+    }
+    .logo-svg {
+      width: 100%;
+      max-width: 360px;
+      height: auto;
+      display: block;
+      margin: 0 auto;
+    }
+
+    .welcome-text {
+      text-align: center;
+      font-size: 18px;
+      line-height: 1.55;
+      font-weight: 500;
+      color: var(--color-text-primary);
+      margin-bottom: 8px;
+    }
+
+    /* =========================================================
+       Video-Container (16:9)
+       ========================================================= */
+    .video-container {
+      position: relative;
+      width: 100%;
+      padding-bottom: 56.25%;
+      height: 0;
+      margin-top: 12px;
+      margin-bottom: 4px;
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      background: #000;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.10);
+    }
+    .video-container iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+
+    /* Print-Fallback für Videos */
+    .video-print-info {
+      display: none;
+      padding: 16px;
+      border: 1px dashed var(--color-border-strong);
+      border-radius: var(--radius-sm);
+      background: var(--color-surface-alt);
+      font-size: 14px;
+      color: var(--color-text-secondary);
+      margin-top: 10px;
+    }
+    .video-print-info strong { color: var(--color-primary); }
+    .video-print-info code {
+      font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+      font-size: 13px;
+      color: var(--color-accent-dark);
+      word-break: break-all;
+    }
+
+    /* =========================================================
+       Bottom-Navigation
+       ========================================================= */
+    .bottom-nav {
+      position: sticky;
+      bottom: 0;
+      width: 100%;
+      background: white;
+      border-top: 1px solid var(--color-border);
+      display: flex;
+      justify-content: space-around;
+      padding: 10px 0 18px 0;
+      z-index: 100;
+      box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.04);
+    }
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: var(--color-text-secondary);
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      flex: 1;
+      text-align: center;
+      transition: color 0.2s;
+      padding: 4px 0;
+      background: none;
+      border: none;
+      font-family: inherit;
+      letter-spacing: 0.01em;
+    }
+    .nav-item:focus-visible {
+      outline: 2px solid var(--color-accent);
+      outline-offset: 2px;
+      border-radius: 4px;
+    }
+    .nav-item.active { color: var(--color-primary); }
+    .nav-item svg {
+      width: 24px;
+      height: 24px;
+      margin-bottom: 5px;
+      transition: transform 0.2s, color 0.2s;
+      stroke: currentColor;
+      fill: none;
+    }
+    .nav-item.active svg {
+      transform: scale(1.1);
+      color: var(--color-accent);
+    }
+
+    /* =========================================================
+       Print-Header (nur im Druck sichtbar)
+       ========================================================= */
+    .print-header { display: none; }
+
+    /* =========================================================
+       PRINT-STYLES (druckreife Ausgabe)
+       ========================================================= */
+    @media print {
+      @page {
+        size: A4;
+        margin: 18mm 16mm 20mm 16mm;
+      }
+
+      :root {
+        --shadow-card: none;
+        --shadow-card-hover: none;
+      }
+
+      html, body {
+        background: #FFFFFF !important;
+        color: #000 !important;
+        font-size: 11pt;
+        line-height: 1.5;
+      }
+
+      body { display: block; }
+
+      #app {
+        max-width: none;
+        width: 100%;
+        min-height: 0;
+        box-shadow: none;
+        background: #FFFFFF;
+        display: block;
+      }
+
+      /* Alle Views drucken */
+      .view {
+        display: block !important;
+        padding: 0 !important;
+        animation: none !important;
+        page-break-after: always;
+        break-after: page;
+      }
+      .view:last-of-type {
+        page-break-after: auto;
+        break-after: auto;
+      }
+
+      /* Navigation komplett ausblenden */
+      .bottom-nav,
+      #main-nav { display: none !important; }
+
+      /* Print-Kopfzeile */
+      .print-header {
+        display: block;
+        border-bottom: 2px solid var(--color-primary);
+        padding-bottom: 6mm;
+        margin-bottom: 8mm;
+        page-break-after: avoid;
+        break-after: avoid;
+      }
+      .print-header .ph-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10mm;
+      }
+      .print-header .ph-logo { width: 60mm; height: auto; }
+      .print-header .ph-meta {
+        font-size: 9pt;
+        color: #555;
+        text-align: right;
+        line-height: 1.4;
+      }
+      .print-header .ph-meta strong { color: var(--color-primary); }
+
+      /* Karten druckfreundlich */
+      .card {
+        background: #FFFFFF !important;
+        box-shadow: none !important;
+        border: 1px solid #C9C9D2 !important;
+        border-top: 3px solid var(--color-accent) !important;
+        margin-bottom: 6mm;
+        padding: 5mm 6mm;
+        page-break-inside: avoid;
+        break-inside: avoid;
+        border-radius: 4px;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      .card.card--primary { border-top-color: var(--color-primary) !important; }
+
+      .card-number {
+        background: var(--color-primary) !important;
+        color: #FFF !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      h1 {
+        font-size: 20pt;
+        color: var(--color-primary) !important;
+        margin-bottom: 4mm;
+        page-break-after: avoid;
+        break-after: avoid;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      h2 {
+        font-size: 13pt;
+        color: var(--color-primary) !important;
+        margin-bottom: 2.5mm;
+        page-break-after: avoid;
+        break-after: avoid;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      p {
+        font-size: 11pt;
+        line-height: 1.55;
+        margin-bottom: 2.5mm;
+        color: #1F1F23 !important;
+        orphans: 3;
+        widows: 3;
+      }
+
+      /* Logo-Container im Druck */
+      .logo-container {
+        background: #FFFFFF !important;
+        box-shadow: none !important;
+        border: none;
+        padding: 0;
+        margin-bottom: 8mm;
+      }
+      .logo-svg { max-width: 80mm; }
+
+      .welcome-text { font-size: 13pt; }
+
+      /* Videos im Druck: Iframes ausblenden, Hinweis anzeigen */
+      .video-container { display: none !important; }
+      .video-print-info { display: block; }
+
+      /* Links sichtbar machen */
+      a {
+        color: var(--color-accent-dark) !important;
+        text-decoration: underline;
+      }
+
+      /* Erzwinge Farbtreue */
+      * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+    }
+
+    /* =========================================================
+       Reduzierte Bewegungen
+       ========================================================= */
+    @media (prefers-reduced-motion: reduce) {
+      .view, .card, .nav-item, .nav-item svg {
+        animation: none !important;
+        transition: none !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Print-Kopfzeile (nur im Druck sichtbar) -->
+  <header class="print-header" aria-hidden="true">
+    <div class="ph-row">
+      <svg class="ph-logo" viewBox="0 0 360 220" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Diakonie Fachkliniken Heidehof">
+        <text x="0" y="58" font-family="-apple-system,Segoe UI,Roboto,Arial,sans-serif"
+              font-size="50" font-weight="800" fill="#009EE3" letter-spacing="-1">Diakonie</text>
+        <g transform="translate(258,18) scale(0.9)" fill="#009EE3">
+          <rect x="0"  y="0"  width="18" height="18" rx="2"/>
+          <rect x="22" y="0"  width="18" height="18" rx="2"/>
+          <rect x="0"  y="22" width="18" height="18" rx="2"/>
+          <rect x="22" y="22" width="18" height="18" rx="2"/>
+          <path d="M 9 18 Q 9 11 20 11 Q 31 11 31 18 Z" fill="#FFFFFF"/>
+        </g>
+        <text x="0" y="128" font-family="-apple-system,Segoe UI,Roboto,Arial,sans-serif"
+              font-size="50" font-weight="800" fill="#511874" letter-spacing="-1">Fachkliniken</text>
+        <text x="0" y="190" font-family="-apple-system,Segoe UI,Roboto,Arial,sans-serif"
+              font-size="50" font-weight="800" fill="#511874" letter-spacing="-1">Heidehof</text>
+      </svg>
+      <div class="ph-meta">
+        <strong>Reha-Begleiter</strong><br>
+        Diakonie Fachkliniken Heidehof<br>
+        <span>Druckversion</span>
+      </div>
+    </div>
+  </header>
+
+  <div id="app">
+
+    <!-- =====================================================
+         Reiter 1: Start
+         ===================================================== -->
+    <section id="view-start" class="view active" role="tabpanel" aria-labelledby="tab-start">
+      <div class="logo-container">
+        <!-- Inline-SVG Logo (Diakonie Fachkliniken Heidehof) -->
+        <svg class="logo-svg" viewBox="0 0 360 220" xmlns="http://www.w3.org/2000/svg"
+             role="img" aria-label="Diakonie Fachkliniken Heidehof">
+          <text x="0" y="58"
+                font-family="-apple-system,Segoe UI,Roboto,Arial,sans-serif"
+                font-size="52" font-weight="800" fill="#009EE3" letter-spacing="-1">Diakonie</text>
+          <!-- Diakonie-Kronenkreuz (stilisiert als 4 Quadrate mit Bogen) -->
+          <g transform="translate(262,16)" fill="#009EE3">
+            <rect x="0"  y="0"  width="20" height="20" rx="2.5"/>
+            <rect x="24" y="0"  width="20" height="20" rx="2.5"/>
+            <rect x="0"  y="24" width="20" height="20" rx="2.5"/>
+            <rect x="24" y="24" width="20" height="20" rx="2.5"/>
+            <path d="M 10 20 Q 10 12 22 12 Q 34 12 34 20 Z" fill="#FFFFFF"/>
+          </g>
+          <text x="0" y="130"
+                font-family="-apple-system,Segoe UI,Roboto,Arial,sans-serif"
+                font-size="52" font-weight="800" fill="#511874" letter-spacing="-1">Fachkliniken</text>
+          <text x="0" y="194"
+                font-family="-apple-system,Segoe UI,Roboto,Arial,sans-serif"
+                font-size="52" font-weight="800" fill="#511874" letter-spacing="-1">Heidehof</text>
+        </svg>
+      </div>
+
+      <h1 style="text-align: center;">Herzlich willkommen</h1>
+      <p class="welcome-text">in der Evangelischen Fachklinik Heidehof.</p>
+
+      <div class="card card--primary" style="margin-top: 22px;">
+        <p style="text-align: center;">
+          Der Reha-Begleiter soll Ihnen Wissen über Ihre Erkrankung
+          vermitteln, um Sie beim Prozess der Genesung zu unterstützen.
+        </p>
+      </div>
+    </section>
+
+    <!-- =====================================================
+         Reiter 2: Infos
+         ===================================================== -->
+    <section id="view-infos" class="view" role="tabpanel" aria-labelledby="tab-infos">
+      <h1>Einführung in die Suchtpsychiatrie</h1>
+      <p>Dieser Text erklärt die wichtigsten Grundlagen über Sucht, wie sie entsteht und wie sie behandelt wird.</p>
+
+      <div class="card">
+        <h2><span class="card-number">1</span>Was ist Sucht?</h2>
+        <p>Sucht ist eine chronische und fortschreitende Krankheit des Gehirns. Sie ist ein massives medizinisches Problem, von dem etwa jeder fünfte Erwachsene betroffen ist. Um Sucht als Krankheit zu verstehen, zieht die moderne Medizin fünf zentrale Kriterien heran: Sie hat massive Auswirkungen auf die Bevölkerung, sie zeigt zuverlässige und spezifische Symptome, sie basiert auf einer veränderten Anatomie und Funktion des Gehirns, sie wird durch biologische Risikofaktoren verstärkt, und sie kann durch gezielte Eingriffe diagnostiziert und behandelt werden. Sucht schädigt die Motivation und den freien Willen. Ein süchtiger Patient leidet unter einer fehlerhaften Steuerung seiner Handlungen, die das Gehirn dazu zwingt, der Droge den absoluten Vorrang zu geben. Es handelt sich also keinesfalls um eine einfache Willensschwäche oder einen moralischen Fehler, sondern um einen pathologischen Zustand, der eine hochqualifizierte medizinische und psychiatrische Behandlung durch einen Arzt erfordert. Die Suchtpsychiatrie betrachtet diesen Zustand als primäre Erkrankung des Gehirns, die das gesamte Leben des Patienten und seiner Familie drastisch verändert.</p>
+      </div>
+
+      <div class="card">
+        <h2><span class="card-number">2</span>Die Folgen für die Gesellschaft</h2>
+        <p>Die gesellschaftlichen und wirtschaftlichen Auswirkungen von Suchterkrankungen sind verheerend. Studien zeigen, dass Tabakkonsum, schlechte Ernährung und Alkohol die drei häufigsten Ursachen für einen frühen Tod sind. Auch die Folgen illegaler und ärztlich verursachter Drogenabhängigkeiten, wie die aktuelle Opioidkrise, zählen zu den Hauptursachen für Mortalität. Ein süchtiger Mensch verliert oft die Fähigkeit, seinem Beruf nachzugehen, was Unternehmen wertvolle Arbeitskräfte entzieht. Die Folge sind häufige Krankentage, Arbeitslosigkeit und ein massiver wirtschaftlicher Schaden. Darüber hinaus zerstört die Sucht das soziale Gefüge. Die Krankheit wirkt oft generationsübergreifend: Wenn ein Vater oder eine Mutter süchtig ist, führt dies häufig zu Vernachlässigung und instabilen Familienverhältnissen. Diese toxische Umgebung schädigt die Gehirnentwicklung der Kinder und erhöht deren eigenes Risiko, später an Sucht oder psychischen Störungen zu erkranken. Die Kosten für das Gesundheits- und Justizsystem sind enorm, weshalb Prävention und effektive Therapie unverzichtbar sind.</p>
+      </div>
+
+      <div class="card">
+        <h2><span class="card-number">3</span>Mythen und Missverständnisse</h2>
+        <p>In der Gesellschaft, aber auch im medizinischen Bereich, halten sich hartnäckige Mythen über Sucht, die Stigmatisierung fördern. Ein weit verbreiteter Mythos ist, dass der Patient lediglich Vergnügen sucht. Tatsächlich bereitet der Drogenkonsum im fortgeschrittenen Stadium oft keine Freude mehr, wird aber dennoch zwanghaft fortgesetzt. Ein weiterer Irrglaube ist die Selbstmedikations-Hypothese, die besagt, dass Menschen Drogen nur nehmen, um psychische Schmerzen zu lindern. Diese Ansicht ignoriert, dass Drogen das Gehirn physisch verändern und eine eigenständige Krankheit auslösen. Der dritte Mythos behauptet, der Konsum diene nur der Vermeidung von Entzugserscheinungen. Jedoch erleben viele Patienten Rückfälle, selbst wenn der körperliche Entzug längst überstanden ist. Schließlich gibt es den Mythos des moralischen Defekts, der Sucht als kriminelles Verhalten oder Charakterschwäche abstempelt. Die medizinische Realität zeigt jedoch, dass Sucht ein biologischer Prozess ist, der völlig ohne logischen Grund oder moralische Rechtfertigung abläuft und den Patienten seiner Kontrolle beraubt.</p>
+      </div>
+
+      <div class="card">
+        <h2><span class="card-number">4</span>Symptome: Rausch, Entzug und Toleranz</h2>
+        <p>Um die klinischen Symptome richtig einzuordnen, müssen die Begriffe Rausch, Entzug und Toleranz klar getrennt werden. Der Rausch ist die akute Wirkung einer psychoaktiven Substanz, die die Blut-Hirn-Schranke überwindet. Auf jeden Rausch folgt zwangsläufig ein Entzug, da das Gehirn ständig versucht, sein inneres Gleichgewicht zu halten. Wenn die Droge den Körper verlässt, kommt es zu einer Überkorrektur des Gehirns, was sich in unangenehmen Entzugssymptomen äußert, die meist das genaue Gegenteil der Rauschwirkung sind. Mit der Zeit entwickelt der Patient eine Toleranz, das heißt, das Gehirn passt sich an die ständige Anwesenheit der Droge an. Der Patient benötigt immer größere Mengen, um die gleiche Wirkung zu erzielen, während die Entzugssymptome immer heftiger werden. Es ist wichtig zu verstehen, dass Toleranz und körperlicher Entzug nicht dasselbe sind wie die eigentliche Sucht. Das Diagnosesystem DSM-5 listet elf Kriterien auf. Die meisten dieser Kriterien beschreiben krankhafte Veränderungen in der Motivation, wie den Kontrollverlust, den hohen Zeitaufwand für die Beschaffung der Droge und das Ignorieren massiver gesundheitlicher und sozialer Schäden.</p>
+      </div>
+
+      <div class="card">
+        <h2><span class="card-number">5</span>Das Motivationssystem im Gehirn</h2>
+        <p>Sucht ist eine Erkrankung der neuronalen Netzwerke, die unsere Motivation steuern. Das zentrale System dafür ist das limbische System, das wie ein komplexer Prozessor funktioniert. Wichtige Gehirnareale wie der Präfrontale Kortex, die Amygdala und der Hippocampus senden Informationen an den Nucleus accumbens (NAC). Der NAC entscheidet, welches Verhalten aktuell die höchste Priorität hat. Ein entscheidender Botenstoff in diesem Prozess ist Dopamin. Dopamin signalisiert dem Gehirn nicht nur Freude, sondern vor allem Wichtigkeit. Es markiert neue, überraschende oder überlebenswichtige Reize aus der Umwelt. Jede suchterzeugende Substanz führt zu einer unnatürlichen, massiven Ausschüttung von Dopamin im NAC. Dieses künstliche Signal zwingt das Gehirn zu der Annahme, dass die Beschaffung und der Konsum der Droge die absolut wichtigste Aufgabe für das Überleben darstellt. Gesunde und natürliche Motivatoren wie Nahrung, soziale Bindungen oder Erfolg im Beruf werden dadurch zunehmend in den Hintergrund gedrängt.</p>
+      </div>
+
+      <div class="card">
+        <h2><span class="card-number">6</span>Wie Sucht das Gehirn verändert</h2>
+        <p>Das Gehirn ist plastisch und verändert sich durch Erfahrung. Dieser Prozess wird als Neuroplastizität bezeichnet und ist die Grundlage für das Erlernen von Gewohnheiten. Die ständige Überflutung mit Dopamin durch Drogen führt zu einer fehlgeleiteten Anpassung der neuronalen Verbindungen. Abläufe, die mit dem Drogenkonsum zusammenhängen, werden extrem stark im Gehirn verankert und automatisiert. Es entsteht eine pathologische Gewohnheit, die ohne bewusste Entscheidung abläuft. Das Gehirn organisiert sein Verhaltensrepertoire um, sodass der Drogenkonsum zum zentralen Knotenpunkt aller Handlungen wird. Diese Entwicklung ist vergleichbar mit einem Tumor, der gesundes Gewebe verdrängt: Das suchtbezogene Verhalten wächst und zerstört dabei andere wichtige Verhaltensprogramme wie die Pflege von Freundschaften, Hobbys oder die berufliche Leistung. Gleichzeitig verändert der chronische Konsum die physische Struktur der Zellen, bis hin zur Genexpression im DNA-Kern, wodurch die Zelle ihre eigentliche Funktion verliert und auf den permanenten Ausnahmezustand programmiert wird.</p>
+      </div>
+
+      <div class="card">
+        <h2><span class="card-number">7</span>Wer ist besonders gefährdet?</h2>
+        <p>Die Anfälligkeit für Sucht variiert von Person zu Person stark und hängt von einer komplexen Mischung aus genetischen und umweltbedingten Faktoren ab. Es gibt kein einzelnes Sucht-Gen, vielmehr beeinflussen hunderte von Genen das Risiko. Besonders prägend sind jedoch traumatische Erfahrungen in der Kindheit, wie körperlicher Missbrauch, Vernachlässigung oder das Fehlen einer sicheren Bindung zu den Eltern. Solche Erlebnisse sind toxisch für das sich entwickelnde Gehirn und hinterlassen bleibende biologische Schäden in den emotionalen und motivationalen Netzwerken. Eine weitere hochriskante Phase ist die Adoleszenz. In dieser Zeit baut sich das Gehirn stark um: Das Antriebs- und Belohnungssystem ist bereits voll aktiv, während der Präfrontale Kortex, der für Impulskontrolle und vernünftige Entscheidungen zuständig ist, noch nicht ausgereift ist. Diese biologisch bedingte Impulsivität macht Jugendliche extrem anfällig dafür, Drogen auszuprobieren und rasch eine schwere Abhängigkeit zu entwickeln.</p>
+      </div>
+
+      <div class="card">
+        <h2><span class="card-number">8</span>Die Verbindung zu psychischen Krankheiten</h2>
+        <p>Sucht und psychische Krankheiten treten extrem häufig gemeinsam auf. Dies wird als Doppeldiagnose oder Komorbidität bezeichnet. Zwischen beiden besteht eine bidirektionale Kausalität, was bedeutet, dass sie sich gegenseitig verursachen und verschlimmern. Psychische Erkrankungen wie Schizophrenie, Bipolare Störungen oder posttraumatische Belastungsstörungen basieren auf strukturellen Anomalien in genau den Gehirnregionen, die auch die Motivation steuern. Ist dieses System bereits durch eine psychische Krankheit geschädigt, dient es als Katalysator, der die Entstehung einer Sucht massiv beschleunigt. Tiermodelle haben bewiesen, dass eine Schädigung des Gehirns in der frühen Entwicklung dazu führt, dass später eine viel stärkere Sensibilisierung für Drogen entsteht. Umgekehrt wirken Drogen extrem toxisch auf diese Netzwerke und zerstören beispielsweise die Neubildung von Zellen im Hippocampus, was die Symptome der psychischen Erkrankung weiter verschlechtert. Daher müssen psychische Krankheiten und Sucht immer integrativ und gemeinsam behandelt werden.</p>
+      </div>
+
+      <div class="card">
+        <h2><span class="card-number">9</span>Der erste Schritt zur Behandlung</h2>
+        <p>Eine fundierte Diagnose und eine kontinuierliche Überwachung sind das Fundament jeder Suchtbehandlung. In der modernen Suchtpsychiatrie wird dafür das 2x4-Modell angewendet, welches Sucht und psychische Erkrankungen völlig gleichberechtigt integriert. Der Diagnostikprozess beginnt mit einem ausführlichen klinischen Interview, das die medizinische und psychiatrische Vorgeschichte exakt erfasst. Zur objektiven Messung nutzt der Arzt Urinkontrollen, Bluttests sowie die Abfrage von Rezeptdatenbanken, um den Medikamentenverbrauch transparent zu machen. Da Sucht eine chronische Krankheit ist, verläuft die Genesung selten geradlinig. Rückfälle sind Teil des Krankheitsbildes und keine persönlichen Niederlagen. Jeder Rückfall und jeder Fortschritt wird als wertvoller Datenpunkt dokumentiert, um die Therapiepläne präzise anzupassen. Die Behandlung erfordert Geduld und ein langfristiges Management, ganz ähnlich wie bei der Betreuung von Patienten mit chronischen somatischen Erkrankungen.</p>
+      </div>
+
+      <div class="card">
+        <h2><span class="card-number">10</span>Wege aus der Sucht: Heilung und Kontrolle</h2>
+        <p>Die Therapie stützt sich auf eine Kombination aus Pharmakologie und intensiver Psychotherapie. Eine zentrale Säule ist die Schadensminderung. Sie zielt darauf ab, Todesfälle, Infektionen und soziale Schäden sofort zu stoppen. Hierbei kommen sichere Ersatzmedikamente wie Methadon oder Buprenorphin bei Opioid-Sucht sowie Nikotinersatzpräparate zum Einsatz. Das langfristige Ziel für viele Patienten ist jedoch die vollständige Remission. Hier werden Medikamente genutzt, die keine Rauschwirkung haben, wie Naltrexon, das die Wirkung von Opioiden und Alkohol im Gehirn blockiert. Parallel dazu ist Psychotherapie essenziell, um neue, gesunde Gewohnheiten im Gehirn zu verankern. Methoden wie das Motivational Interviewing fördern den eigenen Antrieb des Patienten zur Veränderung, während die Kognitive Verhaltenstherapie konkrete Strategien gegen Rückfälle und zum Umgang mit Auslösern vermittelt. Auch Gruppentherapien und Selbsthilfekonzepte stärken das soziale Netz des Patienten. Nur durch diesen integrativen Ansatz kann sich das Gehirn erholen und die Motivation auf ein gesundes Leben neu ausgerichtet werden.</p>
+      </div>
+    </section>
+
+    <!-- =====================================================
+         Reiter 3: Podcasts
+         ===================================================== -->
+    <section id="view-podcasts" class="view" role="tabpanel" aria-labelledby="tab-podcasts">
+      <h1>Podcasts</h1>
+      <div class="card">
+        <h2>Wissenswertes zur Therapie</h2>
+        <p><small>Informative Audiosendungen rund um die Bewältigung von Suchterkrankungen und den Therapiealltag.</small></p>
+        <div class="video-container">
+          <iframe src="https://www.youtube.com/embed/_gS7Ml8gucU"
+                  title="Podcast: Wissenswertes zur Therapie"
+                  loading="lazy"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowfullscreen></iframe>
+        </div>
+        <div class="video-print-info">
+          <strong>Online-Podcast:</strong>
+          <code>https://www.youtube.com/watch?v=_gS7Ml8gucU</code>
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================
+         Reiter 4: Videos
+         ===================================================== -->
+    <section id="view-videos" class="view" role="tabpanel" aria-labelledby="tab-videos">
+      <h1>Videos</h1>
+      <div class="card">
+        <h2>Visuelle Hilfestellungen</h2>
+        <p><small>Video-Material zur Unterstützung der Rehabilitation und weiterführende Erklärungen.</small></p>
+        <div class="video-container">
+          <iframe src="https://www.youtube.com/embed/QMItThx-hFQ"
+                  title="Video: Visuelle Hilfestellungen"
+                  loading="lazy"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowfullscreen></iframe>
+        </div>
+        <div class="video-print-info">
+          <strong>Online-Video:</strong>
+          <code>https://www.youtube.com/watch?v=QMItThx-hFQ</code>
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================
+         Bottom-Navigation
+         ===================================================== -->
+    <nav class="bottom-nav" id="main-nav" role="tablist" aria-label="Hauptnavigation">
+      <button type="button" class="nav-item active" data-tab="start" id="tab-start"
+              role="tab" aria-selected="true" aria-controls="view-start">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke-width="2" stroke-linejoin="round"/>
+        </svg>Start
+      </button>
+
+      <button type="button" class="nav-item" data-tab="infos" id="tab-infos"
+              role="tab" aria-selected="false" aria-controls="view-infos">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" stroke-width="2" stroke-linejoin="round"/>
+          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" stroke-width="2" stroke-linejoin="round"/>
+        </svg>Infos
+      </button>
+
+      <button type="button" class="nav-item" data-tab="podcasts" id="tab-podcasts"
+              role="tab" aria-selected="false" aria-controls="view-podcasts">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z" stroke-width="2" stroke-linejoin="round"/>
+          <path d="M19 10v2a7 7 0 0 1-14 0v-2" stroke-width="2" stroke-linecap="round"/>
+          <line x1="12" y1="19" x2="12" y2="22" stroke-width="2" stroke-linecap="round"/>
+          <line x1="8"  y1="22" x2="16" y2="22" stroke-width="2" stroke-linecap="round"/>
+        </svg>Podcasts
+      </button>
+
+      <button type="button" class="nav-item" data-tab="videos" id="tab-videos"
+              role="tab" aria-selected="false" aria-controls="view-videos">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="2" y="3" width="20" height="14" rx="2" ry="2" stroke-width="2"/>
+          <polygon points="10 8 16 10 10 12 10 8" stroke-width="2" stroke-linejoin="round"/>
+          <line x1="8"  y1="21" x2="16" y2="21" stroke-width="2" stroke-linecap="round"/>
+          <line x1="12" y1="17" x2="12" y2="21" stroke-width="2" stroke-linecap="round"/>
+        </svg>Videos
+      </button>
+    </nav>
+
+  </div>
+
+  <script>
+    // ==========================================
+    // APPLIKATIONS-LOGIK
+    // ==========================================
+    (function () {
+      'use strict';
+
+      const app = {
+        init() {
+          // Event-Delegation auf der Navigation
+          const nav = document.getElementById('main-nav');
+          if (nav) {
+            nav.addEventListener('click', (e) => {
+              const item = e.target.closest('.nav-item');
+              if (item && item.dataset.tab) {
+                app.nav(item.dataset.tab);
+              }
+            });
+
+            // Tastatur-Navigation (Pfeiltasten)
+            nav.addEventListener('keydown', (e) => {
+              const keys = ['ArrowLeft', 'ArrowRight', 'Home', 'End'];
+              if (!keys.includes(e.key)) return;
+              const items = Array.from(nav.querySelectorAll('.nav-item'));
+              const idx = items.indexOf(document.activeElement);
+              let next = idx;
+              if (e.key === 'ArrowRight') next = (idx + 1) % items.length;
+              if (e.key === 'ArrowLeft')  next = (idx - 1 + items.length) % items.length;
+              if (e.key === 'Home') next = 0;
+              if (e.key === 'End')  next = items.length - 1;
+              if (next !== idx && items[next]) {
+                items[next].focus();
+                app.nav(items[next].dataset.tab);
+                e.preventDefault();
+              }
+            });
+          }
+
+          app.nav('start');
+        },
+
+        showView(id) {
+          document.querySelectorAll('.view').forEach((v) => v.classList.remove('active'));
+          const target = document.getElementById(id);
+          if (target) {
+            target.classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'instant' in window ? 'instant' : 'auto' });
+          }
+        },
+
+        nav(tab) {
+          document.querySelectorAll('.nav-item').forEach((n) => {
+            const isActive = n.dataset.tab === tab;
+            n.classList.toggle('active', isActive);
+            n.setAttribute('aria-selected', isActive ? 'true' : 'false');
+          });
+          app.showView('view-' + tab);
+        },
+      };
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', app.init);
+      } else {
+        app.init();
+      }
+
+      // Globale Verfügbarkeit für eventuelle Inline-Aufrufe
+      window.app = app;
+    })();
+  </script>
+</body>
+</html>
